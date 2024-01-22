@@ -83,9 +83,13 @@ def generate_file_response(file_id: str, mime_type: str, sender_id: str) -> str:
 
         if local_file_path['status'] == 1:
             try:
-                send_message(sender_id, 'Processing the file and generating the knowledge...')
+                send_message(
+                    sender_id, 'Processing the file and generating the knowledge...')
+                print("sent")
                 create_index(local_file_path['local_file_path'])
+                print("created index")
                 os.unlink(local_file_path['local_file_path'])
+                print("unlink already")
                 return 'File saved successfully.'
             except:
                 return 'We are facing some technical issue at saving the file.'

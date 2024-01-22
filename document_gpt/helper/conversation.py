@@ -1,10 +1,12 @@
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
-from langchain.chat_models import ChatOpenAI
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.vectorstores.chroma import Chroma
+from langchain.chat_models.openai import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
+from openai import OpenAI
 
 from config import config
+
 
 def create_conversation() -> ConversationalRetrievalChain:
 

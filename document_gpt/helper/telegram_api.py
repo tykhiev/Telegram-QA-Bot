@@ -22,15 +22,17 @@ def send_message(chat_id: int, message: str) -> bool:
     Returns:
         - bool: either 0 for error or 1 for success 
     '''
+    send_chat_action(chat_id, "typing")
 
     payload = {
         'chat_id': chat_id,
-        'text': message
+        'text': message,
     }
     headers = {'Content-Type': 'application/json'}
 
     response = requests.request(
         'POST', f'{BASE_URL}/sendMessage', json=payload, headers=headers)
+
     status_code = response.status_code
     response = json.loads(response.text)
 
@@ -129,13 +131,14 @@ def set_menu_commands(commands: List[dict]) -> bool:
     else:
         return False
 
+
 def get_file_path(file_id: str) -> dict:
     '''
     Get the file path from the file id of the attachement
 
     Parameters:
         - file_id(str): file id of the attachement
-    
+
     Returns:
         - dict of status and file path of the attachment
     '''
@@ -143,7 +146,7 @@ def get_file_path(file_id: str) -> dict:
     url = f'https://api.telegram.org/bot{config.TELEGRAM_TOKEN}/getFile'
     querystring = {'file_id': file_id}
     response = requests.request('GET', url, params=querystring)
-    
+
     if response.status_code == 200:
         data = json.loads(response.text)
         file_path = data['result']['file_path']
@@ -157,6 +160,7 @@ def get_file_path(file_id: str) -> dict:
             'status': 0,
             'file_path': ''
         }
+
 
 def save_file_and_get_local_path(file_path: str) -> dict:
     '''
@@ -196,4 +200,32 @@ def save_file_and_get_local_path(file_path: str) -> dict:
             'file_name': '',
             'extension': ''
         }
-        
+
+
+def send_chat_action(chat_id: int, action: str) -> bool:
+    '''
+    Send a chat action to a Telegram user.
+
+    Parameters:
+        - chat_id(int): chat id of the user
+        - action(str): the chat action to send, e.g., "typing"
+
+    Returns:
+        - bool: True for success, False for error 
+    '''
+    payload = {
+        'chat_id': chat_id,
+        'action': action,
+    }
+    headers = {'Content-Type': 'application/json'}
+
+    response = requests.request(
+        'POST', f'{BASE_URL}/sendChatAction', json=payload, headers=headers)
+
+    status_code = response.status_code
+    response_data = json.loads(response.text)
+
+    if status_code == 200 and response_data.get('ok', False):
+        return True
+    else:
+        return False
