@@ -22,7 +22,8 @@ def telegram_api():
             if telegram_data['is_unknown']:
                 return 'OK', 200
             if telegram_data['is_text']:
-                response = generate_text_response(telegram_data['text'])
+                response = generate_text_response(
+                    telegram_data['text'], telegram_data['sender_id'])
                 send_message(telegram_data['sender_id'], response)
                 return 'OK', 200
             if telegram_data['is_document']:

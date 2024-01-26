@@ -4,6 +4,11 @@ from document_gpt.helper.telegram_api import get_file_path, save_file_and_get_lo
 from document_gpt.helper.conversation import create_conversation
 from document_gpt.helper.create_index import create_index
 
+from config import config
+
+from langchain.memory import RedisChatMessageHistory
+
+
 qa = create_conversation()
 
 
@@ -42,7 +47,7 @@ def process_telegram_data(data: dict) -> dict:
     }
 
 
-def generate_text_response(text: str) -> str:
+def generate_text_response(text: str, user_id: str) -> str:
 
     if text == '/start':
         return 'Hi, I can help you with saving your data to the cloud and retive it, I can also help you with your questions.'
@@ -57,13 +62,22 @@ def generate_text_response(text: str) -> str:
     Retrive when this function is called
     Create chat_history variable and pass it in the qa 
     '''
+    chat_history = RedisChatMessageHistory(
+        config.REDIS_CLIENT, key_prefix="chat_history")
+
+    chat_history.add_user_message(user_id, message=text)
+
+    retrieved_history = chat_history.messages(user_id)
+    print("Retrieved Chat History:", retrieved_history)
 
     result = qa(
         {
             'question': text,
-            'chat_history': {}
+            'chat_history': retrieved_history
         }
     )
+
+    chat_history.add_ai_message(result['answer'])
 
     try:
         return result['answer']
@@ -78,13 +92,14 @@ def generate_file_response(file_id: str, mime_type: str, sender_id: str) -> str:
 
     file_path = get_file_path(file_id)
 
+    send_message(
+        sender_id, 'Processing the file and generating the knowledge...')
+
     if file_path['status'] == 1:
         local_file_path = save_file_and_get_local_path(file_path['file_path'])
 
         if local_file_path['status'] == 1:
             try:
-                send_message(
-                    sender_id, 'Processing the file and generating the knowledge...')
                 print("sent")
                 create_index(local_file_path['local_file_path'])
                 print("created index")
