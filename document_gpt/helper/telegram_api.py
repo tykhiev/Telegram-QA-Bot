@@ -8,7 +8,7 @@ import requests
 
 from config import config
 
-BASE_URL = f'https://api.telegram.org/bot{config.TELEGRAM_TOKEN}'
+BASE_URL = f'https://api.telegram.org/bot6713060201:AAH34ogbI6OOs5DMaK5h_lMLpdluN4S3Nbs'
 
 
 def send_message(chat_id: int, message: str) -> bool:
@@ -23,6 +23,7 @@ def send_message(chat_id: int, message: str) -> bool:
         - bool: either 0 for error or 1 for success 
     '''
     send_chat_action(chat_id, "typing")
+    print(config.TELEGRAM_TOKEN)
 
     payload = {
         'chat_id': chat_id,
@@ -96,6 +97,7 @@ def set_webhook(url: str, secret_token: str = '') -> bool:
 
     response = requests.request(
         'POST', f'{BASE_URL}/setWebhook', json=payload, headers=headers)
+
     status_code = response.status_code
     response = json.loads(response.text)
 
@@ -143,7 +145,7 @@ def get_file_path(file_id: str) -> dict:
         - dict of status and file path of the attachment
     '''
 
-    url = f'https://api.telegram.org/bot{config.TELEGRAM_TOKEN}/getFile'
+    url = f'https://api.telegram.org/bot6713060201:AAH34ogbI6OOs5DMaK5h_lMLpdluN4S3Nbs/getFile'
     querystring = {'file_id': file_id}
     response = requests.request('GET', url, params=querystring)
 
@@ -173,7 +175,7 @@ def save_file_and_get_local_path(file_path: str) -> dict:
         - dict of status and the local file path of the attchment
     '''
 
-    url = f'https://api.telegram.org/file/bot{config.TELEGRAM_TOKEN}/{file_path}'
+    url = f'https://api.telegram.org/file/bot6713060201:AAH34ogbI6OOs5DMaK5h_lMLpdluN4S3Nbs/{file_path}'
     response = requests.request('GET', url)
     TMP_DIR = tempfile.gettempdir()
     extention = file_path.split('.')[-1]

@@ -64,9 +64,10 @@ def generate_text_response(text: str) -> str:
             'chat_history': {}
         }
     )
-
+    # result = qa
+    print(result)
     try:
-        return result['answer']
+        return result["output"]
     except:
         return 'We are facing some technical issue.'
 

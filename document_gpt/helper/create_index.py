@@ -6,7 +6,7 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.document_loaders.directory import DirectoryLoader
 from langchain.document_loaders.text import TextLoader
 from PyPDF2 import PdfReader
-
+from langchain.embeddings.huggingface import HuggingFaceEmbeddings
 from config import config
 
 
@@ -41,9 +41,11 @@ def create_index(file_path: str) -> None:
         texts = text_splitter.split_documents(documents)
         print(f'Split {len(texts)} documents.')
 
-        embeddings = OpenAIEmbeddings(
-            openai_api_key=config.OPENAI_API_KEY
-        )
+        # embeddings = OpenAIEmbeddings(
+        #     openai_api_key=config.OPENAI_API_KEY
+        # )
+
+        embeddings = OpenAIEmbeddings()
         print('Creating embeddings...')
 
         persist_directory = config.DB_DIR
